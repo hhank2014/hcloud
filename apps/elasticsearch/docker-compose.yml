@@ -1,0 +1,82 @@
+version: '3.9'
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.2
+    container_name: es01
+    restart: always
+    environment:
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+      - ./config/es01.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./hosts:/etc/hosts
+    ports:
+      - 9200:9200
+    networks:
+      elastic:
+        ipv4_address: 172.25.0.2
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.2
+    container_name: es02
+    restart: always
+    environment:
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data02:/usr/share/elasticsearch/data
+      - ./config/es02.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./hosts:/etc/hosts
+    ports:
+      - 9201:9200
+    networks:
+      elastic:
+        ipv4_address: 172.25.0.3
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.2
+    container_name: es03
+    restart: always
+    environment:
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data03:/usr/share/elasticsearch/data
+      - ./config/es02.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./hosts:/etc/hosts
+    ports:
+      - 9202:9200
+    networks:
+      elastic:
+        ipv4_address: 172.25.0.4
+
+volumes:
+  data01:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/es_cluster/es01
+  data02:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/es_cluster/es02
+  data03:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/es_cluster/es03
+networks:
+  elastic:
+    external: true
