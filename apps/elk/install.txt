@@ -1,0 +1,44 @@
+mkdir /data/elastic/{data,logs}
+
+
+vim /etc/sysctl.conf
+max_map_count = 262144
+
+echo 262144 > "/proc/sys/vm/max_map_count"
+
+
+docker exec -it elasticsearch bash
+
+# Create password
+elasticsearch-setup-passwords interactive
+
+root@udev:~/hcloud/apps/elasticsearch# docker exec -it elasticsearch bash  (default: test123a@)
+elasticsearch@fdd5a1ab2947:~$ elasticsearch-setup-passwords interactive
+******************************************************************************
+Note: The 'elasticsearch-setup-passwords' tool has been deprecated. This       command will be removed in a future release.
+******************************************************************************
+
+Initiating the setup of passwords for reserved users elastic,apm_system,kibana,kibana_system,logstash_system,beats_system,remote_monitoring_user.
+You will be prompted to enter passwords as the process progresses.
+Please confirm that you would like to continue [y/N]y
+
+Changed password for user apm_system
+PASSWORD apm_system = RASA1kv6kjnFnQ5HMhGJ
+
+Changed password for user kibana_system
+PASSWORD kibana_system = U3El6Gv5BdCFzwEGPxFY
+
+Changed password for user kibana
+PASSWORD kibana = U3El6Gv5BdCFzwEGPxFY
+
+Changed password for user logstash_system
+PASSWORD logstash_system = 6lfI9Qa37fb89U8NfU50
+
+Changed password for user beats_system
+PASSWORD beats_system = EtUNLsjpwfRkTLArBRAy
+
+Changed password for user remote_monitoring_user
+PASSWORD remote_monitoring_user = DgEYsCarYYh2izJf274m
+
+Changed password for user elastic
+PASSWORD elastic = 6OxNFxPkif2qQWzxuVOX

@@ -1,0 +1,39 @@
+version: '3.9'
+services:
+  rabbitmq1:
+    image: rabbitmq:latest
+    container_name: mq1
+    hostname: mq1
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=JT0WxMA3KnbWnhXd
+    volumes:
+      - data01:/var/lib/rabbitmq
+      - logs01:/var/log/rabbitmq
+      - ./config/management_agent.disable_metrics_collector.conf:/etc/rabbitmq/conf.d/management_agent.disable_metrics_collector.conf
+      - ./config/10-defaults.conf:/etc/rabbitmq/conf.d/10-defaults.conf
+    # command: /bin/bash -c "rabbitmq-plugins enable rabbitmq_management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - rabbitmq
+
+volumes:
+  data01:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/rabbitmq/data
+  logs01:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/rabbitmq/logs
+
+networks:
+  rabbitmq:
+    driver: bridge

@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  elasticsearch_exporter:
+    image: quay.io/prometheuscommunity/elasticsearch-exporter:latest
+    container_name: elasticsearch_exporter
+    command: '--es.uri=http://192.168.21.161:5200'
+    restart: always
+    ports:
+      - "127.0.0.1:9114:9114"
+    networks:
+      - elastic

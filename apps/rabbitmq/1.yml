@@ -1,0 +1,118 @@
+version: '3.9'
+services:
+  rabbitmq1:
+    image: rabbitmq:latest
+    container_name: mq1
+    ports:
+      - 15671:15672
+      - 5671:5672
+    hostname: mq1
+    restart: always
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 'mycookie'
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: JT0WxMA3KnbWnhXd
+      RABBITMQ_QUEUE_MASTER_LOCATOR: min-masters
+      RABBITMQ_CLUSTER_PARTITION_HANDLING: autoheal
+      RABBITMQ_DEFAULT_HA_MODE: all
+    volumes:
+      - data01:/var/lib/rabbitmq
+      - logs01:/var/log/rabbitmq
+      - ./hosts:/etc/hosts
+      - ./config/management_agent.disable_metrics_collector.conf:/etc/rabbitmq/conf.d/management_agent.disable_metrics_collector.conf
+    networks:
+      rabbitmq:
+        ipv4_address: 172.25.0.2
+
+  rabbitmq2:
+    image: rabbitmq:latest
+    container_name: mq2
+    ports:
+      - 15674:15672
+      - 5674:5672
+    hostname: mq2
+    restart: always
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 'mycookie'
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: JT0WxMA3KnbWnhXd
+      RABBITMQ_QUEUE_MASTER_LOCATOR: min-masters
+      RABBITMQ_CLUSTER_PARTITION_HANDLING: autoheal
+      RABBITMQ_DEFAULT_HA_MODE: all
+
+    volumes:
+      - data02:/var/lib/rabbitmq
+      - logs02:/var/log/rabbitmq
+      - ./hosts:/etc/hosts
+      - ./config/management_agent.disable_metrics_collector.conf:/etc/rabbitmq/conf.d/management_agent.disable_metrics_collector.conf
+    networks:
+      rabbitmq:
+        ipv4_address: 172.25.0.3
+
+  rabbitmq3:
+    image: rabbitmq:latest
+    container_name: mq3
+    ports:
+      - 15673:15672
+      - 5673:5672
+    hostname: mq3
+    restart: always
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 'mycookie'
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: JT0WxMA3KnbWnhXd
+      RABBITMQ_QUEUE_MASTER_LOCATOR: min-masters
+      RABBITMQ_CLUSTER_PARTITION_HANDLING: autoheal
+      RABBITMQ_DEFAULT_HA_MODE: all
+    volumes:
+      - data03:/var/lib/rabbitmq
+      - logs03:/var/log/rabbitmq
+      - ./hosts:/etc/hosts
+      - ./config/management_agent.disable_metrics_collector.conf:/etc/rabbitmq/conf.d/management_agent.disable_metrics_collector.conf
+    networks:
+      rabbitmq:
+        ipv4_address: 172.25.0.4
+
+networks:
+  rabbitmq:
+    external: true
+
+volumes:
+  data01:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/rabbitmq/mq1/data
+  logs01:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/rabbitmq/mq1/logs
+
+  data02:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/rabbitmq/mq2/data
+  logs02:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/rabbitmq/mq2/logs
+
+  data03:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/rabbitmq/mq3/data
+  logs03:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/rabbitmq/mq3/logs

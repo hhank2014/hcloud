@@ -1,0 +1,86 @@
+version: '3.9'
+services:
+  elasticsearch:
+    build:
+      context: elasticsearch/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    container_name: elasticsearch
+    restart: unless-stopped
+    environment:
+      - node.name=es01
+      - cluster.name=elastic
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "xpack.security.enabled=true"
+      - "ES_JAVA_OPTS=-Xms500m -Xmx500m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+      - logs01:/usr/share/elasticsearch/logs
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
+
+  logstash:
+    build:
+      context: logstash/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline/:/usr/share/logstash/pipeline/
+    container_name: logstash
+    ports:
+      - 5044:5044
+    environment:
+      - "LS_JAVA_OPTS=-Xms500m -Xmx500m"
+      - "LOGSTASH_USER=${LOGSTASH_USER}"
+      - "LOGSTASH_PASSWD=${LOGSTASH_PASSWD}"
+    networks:
+      - elastic
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+
+  kibana:
+    build:
+      context: kibana/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    container_name: kibana
+    environment:
+      - "KIBANA_USERNAME=${KIBANA_USER}"
+      - "KIBANA_PASSWD=${KIBANA_PASSWD}"
+    ports:
+      - 5601:5601
+    networks:
+      - elastic
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+
+volumes:
+  data01:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/elastic/data
+  logs01:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /data/elastic/logs
+
+networks:
+  elastic:
+    driver: bridge
